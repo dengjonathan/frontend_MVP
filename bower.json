@@ -1,0 +1,12 @@
+{
+  "name": "Jon_MVP",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "jquery": "latest",
+    "bootstrap-sass": "latest"
+  },
+  "devDependencies": {
+  }
+}
