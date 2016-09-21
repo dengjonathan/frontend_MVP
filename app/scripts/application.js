@@ -1,5 +1,7 @@
 'use strict';
 
-$(function() {
-  // your code here
+$(function () {
+  var hashT = new HashTable();
+
+
 });

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Jon MVP</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <!-- @if GULP_ENVIRONMENT='development' -->
+  <link rel="stylesheet" href="/styles/vendor.css">
+  <!-- @endif -->
+  <link rel="stylesheet" href="/styles/application.css">
+  <link rel="shortcut icon" href="/favicon.ico">
+</head>
+
+<body>
+  <div class="content">
+    <h1>Welcome to Jon_MVP!</h1>
+    <p>
+      Jon MVP is a bare-bones front-end application framework that allow me to create micro-apps demonstrating new concepts that I learned.
+      <a href="https://github.com/dengjonathan">My GitHub profile</a>.
+    </p>
+    <div class="app">
+    </div>
+  </div>
+  <!-- @if GULP_ENVIRONMENT='development' -->
+  <script src="/scripts/templates.js"></script>
+  <!-- @endif -->
+  <script type="text/javascript" src="/scripts/application.js"></script>
+</body>
+
+</html>

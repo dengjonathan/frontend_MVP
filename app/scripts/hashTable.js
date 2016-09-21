@@ -1,4 +1,4 @@
-"use stri
+"use strict"
 var HashTable = function () {
   this._limit = 8;
   this.nodesFilled = 0;

@@ -6,7 +6,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "gulp-sass": "^2.3.2"
+    "bootstrap": "^3.3.7",
+    "dropdown": "^0.2.0",
+    "gulp-sass": "^2.3.2",
+    "owl.carousel": "^2.1.4",
+    "respond": "^0.9.0",
+    "rivets": "^0.9.4"
   },
   "devDependencies": {
     "browserify": "^4.1.11",
