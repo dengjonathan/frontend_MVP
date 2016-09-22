@@ -17,7 +17,7 @@ var lr = require('tiny-lr')();
 var program = {
   exitCode: 0,
   errors: [],
-  recordError: function(e) {
+  recordError: function (e) {
     process.stderr.write(colors.red(e) + '\n\x07');
     program.exitCode = 1;
     program.errors.push(e);
@@ -27,7 +27,7 @@ var program = {
   }
 };
 
-var plumber = function(options) {
+var plumber = function (options) {
   return $.plumber(_.extend({ errorHandler: program.recordError }, options));
 };
 
@@ -35,7 +35,7 @@ var plumber = function(options) {
  * Path reference
  */
 
-var paths = (function() {
+var paths = (function () {
   var table = {
     'src.project.scripts': ['./*.js'],
     'src.app.static': [
@@ -62,7 +62,7 @@ var paths = (function() {
     'dest.app.styles': '<%= dist %>/public/styles',
   };
 
-  return function(name, options) {
+  return function (name, options) {
     var opts = options || {};
     var env = opts.env || 'development';
     var distribution = (env === 'distribution');
@@ -70,13 +70,13 @@ var paths = (function() {
       'dist': (distribution ? 'dist' : 'tmp')
     };
     var result = table[name];
-    if (typeof result === 'string') { result = _.template(result, data); }
-    else if (result instanceof Array) {
-      result = _.map(result, function(value) {
+    if (typeof result === 'string') { result = _.template(result, data); } else if (result instanceof Array) {
+      result = _.map(result, function (value) {
         return _.template(value, data);
       });
+    } else if (!result) {
+      throw new Error('Could not find path for ' + name);
     }
-    else if (!result) { throw new Error('Could not find path for ' + name); }
     return result;
   };
 })();
@@ -86,10 +86,10 @@ var paths = (function() {
  * Utility
  */
 
-var environment = (function() {
+var environment = (function () {
   var set = false;
   var current = null;
-  return function(value) {
+  return function (value) {
     if (set && current !== value) {
       throw new Error('Environment already set to ' +
         current + ', cannot change to ' + value);
@@ -105,17 +105,16 @@ var environment = (function() {
  * Browserify helper
  */
 
-var browserify = function() {
+var browserify = function () {
   var create = require('browserify');
-  return through.obj(function(file, enc, callback) {
-    create(file.path).bundle(function(err, contents) {
+  return through.obj(function (file, enc, callback) {
+    create(file.path).bundle(function (err, contents) {
       if (err) {
         gutil.log(util.format('%s: %s',
           colors.red('browserify'),
           err.message));
         this.push(null);
-      }
-      else {
+      } else {
         file.contents = new Buffer(contents);
         this.push(file);
       }
@@ -132,9 +131,9 @@ var browserify = function() {
 
 var tasks = {};
 
-tasks['.serve'] = function(options) {
+tasks['.serve'] = function (options) {
   var opts = options || {};
-  var open = opts.restart ? undefined : function() {
+  var open = opts.restart ? undefined : function () {
     require('open')('http://localhost:' + SERVER_PORT + '/',
       process.env.GULP_OPEN_BROWSER);
   };
@@ -150,7 +149,7 @@ tasks['.serve'] = function(options) {
   lr.listen(LIVERELOAD_PORT);
 };
 
-tasks['.watch'] = function(options) {
+tasks['.watch'] = function (options) {
   var opts = options || {};
 
   if (opts.app) {
@@ -168,7 +167,7 @@ tasks['.watch'] = function(options) {
   }
 };
 
-tasks['.scripts:app'] = function(options) {
+tasks['.scripts:app'] = function (options) {
   var opts = options || {};
   var streams = [];
   var env = opts.env || 'development';
@@ -206,7 +205,7 @@ tasks['.scripts:app'] = function(options) {
   return stream;
 };
 
-tasks['.styles:app'] = function(options) {
+tasks['.styles:app'] = function (options) {
   var opts = options || {};
   var env = opts.env || 'development';
   var distribution = (env === 'distribution');
@@ -241,7 +240,7 @@ tasks['.styles:app'] = function(options) {
   return stream;
 };
 
-tasks['.static:app'] = function(options) {
+tasks['.static:app'] = function (options) {
   var opts = options || {};
   var env = opts.env || 'development';
   var context = { GULP_ENVIRONMENT: env };
@@ -263,7 +262,7 @@ tasks['.static:app'] = function(options) {
   return stream.pipe($.livereload(lr, { auto: false, silent: false }));
 };
 
-tasks['.test:app'] = function(options) {
+tasks['.test:app'] = function (options) {
   var opts = options || {};
   var env = opts.env || 'development';
   var distribution = (env === 'distribution');
@@ -299,7 +298,7 @@ tasks['.test:app'] = function(options) {
     }));
 };
 
-tasks['.clean'] = function(options) {
+tasks['.clean'] = function (options) {
   var opts = options || {};
   return gulp.src(paths('dest.root', opts), { read: false })
     .pipe($.clean());
@@ -310,35 +309,35 @@ tasks['.clean'] = function(options) {
  * Private Tasks
  */
 
-gulp.task('.static:app:dev', function() {
+gulp.task('.static:app:dev', function () {
   return tasks['.static:app'](environment('development'));
 });
 
-gulp.task('.static:app:dist', function() {
+gulp.task('.static:app:dist', function () {
   return tasks['.static:app'](environment('distribution'));
 });
 
-gulp.task('.styles:app:dev', function() {
+gulp.task('.styles:app:dev', function () {
   return tasks['.styles:app'](_.merge(environment('development'), { all: true }));
 });
 
-gulp.task('.styles:app:dev:update', function() {
+gulp.task('.styles:app:dev:update', function () {
   return tasks['.styles:app'](_.merge(environment('development'), { styles: true }));
 });
 
-gulp.task('.styles:app:dist', function() {
+gulp.task('.styles:app:dist', function () {
   return tasks['.styles:app'](_.merge(environment('distribution'), { all: true }));
 });
 
-gulp.task('.scripts:app:dev', function() {
+gulp.task('.scripts:app:dev', function () {
   return tasks['.scripts:app'](_.merge(environment('development'), { all: true }));
 });
 
-gulp.task('.scripts:app:dev:update', function() {
+gulp.task('.scripts:app:dev:update', function () {
   return tasks['.scripts:app'](_.merge(environment('development'), { scripts: true }));
 });
 
-gulp.task('.scripts:app:dist', function() {
+gulp.task('.scripts:app:dist', function () {
   return tasks['.scripts:app'](_.merge(environment('distribution'), { all: true }));
 });
 
@@ -354,35 +353,35 @@ gulp.task('.build:app:dist', [
   '.scripts:app:dist'
 ]);
 
-gulp.task('.watch:app:dev', function() {
+gulp.task('.watch:app:dev', function () {
   return tasks['.watch']({ app: true });
 });
 
-gulp.task('.watch:test:app', function() {
+gulp.task('.watch:test:app', function () {
   return tasks['.watch']({ app: true, testing: true });
 });
 
-gulp.task('.test:app:dev', ['.build:app:dev', '.watch:test:app'], function() {
+gulp.task('.test:app:dev', ['.build:app:dev', '.watch:test:app'], function () {
   return tasks['.test:app'](environment('development'));
 });
 
-gulp.task('.test:app:dev:coverage', ['.build:app:dev'], function() {
+gulp.task('.test:app:dev:coverage', ['.build:app:dev'], function () {
   return tasks['.test:app'](_.merge(environment('development'), { coverage: true }));
 });
 
-gulp.task('.serve:dev', ['.build:app:dev', '.watch:app:dev'], function() {
+gulp.task('.serve:dev', ['.build:app:dev', '.watch:app:dev'], function () {
   return tasks['.serve'](environment('development'));
 });
 
-gulp.task('.serve:dist', ['.build:app:dist'], function() {
+gulp.task('.serve:dist', ['.build:app:dist'], function () {
   return tasks['.serve'](environment('distribution'));
 });
 
-gulp.task('.clean:dev', function() {
+gulp.task('.clean:dev', function () {
   return tasks['.clean'](environment('development'));
 });
 
-gulp.task('.clean:dist', function() {
+gulp.task('.clean:dist', function () {
   return tasks['.clean'](environment('distribution'));
 });
 
@@ -393,33 +392,33 @@ gulp.task('.clean:dist', function() {
 
 gulp.task('default', ['build']);
 
-gulp.task('serve', ['.clean:dev'], function() {
+gulp.task('serve', ['.clean:dev'], function () {
   gulp.start('lint', '.serve:dev');
 });
 
-gulp.task('serve:dist', ['.clean:dist'], function() {
+gulp.task('serve:dist', ['.clean:dist'], function () {
   gulp.start('lint', '.serve:dist');
 });
 
-gulp.task('test', ['.clean:dev'], function() {
+gulp.task('test', ['.clean:dev'], function () {
   gulp.start('lint', '.test:app:dev');
 });
 
-gulp.task('test:coverage', ['.clean:dev'], function() {
-  gulp.start('lint', '.test:app:dev:coverage', function() {
+gulp.task('test:coverage', ['.clean:dev'], function () {
+  gulp.start('lint', '.test:app:dev:coverage', function () {
     process.exit(program.exitCode);
   });
 });
 
-gulp.task('test:app', ['.clean:dev'], function() {
+gulp.task('test:app', ['.clean:dev'], function () {
   gulp.start('lint', '.test:app:dev');
 });
 
-gulp.task('build', ['.clean:dist'], function() {
+gulp.task('build', ['.clean:dist'], function () {
   gulp.start('lint', '.build:app:dist');
 });
 
-gulp.task('lint', function() {
+gulp.task('lint', function () {
   var src = [].concat(
     paths('src.project.scripts'),
     paths('src.app.scripts'),
@@ -432,4 +431,3 @@ gulp.task('lint', function() {
 
 gulp.task('clean', ['.clean:dev']);
 gulp.task('clean:dist', ['.clean:dist']);
-
