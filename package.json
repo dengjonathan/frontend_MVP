@@ -2,12 +2,14 @@
   "name": "Jon_MVP",
   "version": "0.1.0",
   "scripts": {
-    "test": "./node_modules/.bin/gulp test:coverage && if [ \"$TRAVIS\" ]; then cat ./coverage/**/lcov.info | ./node_modules/.bin/coveralls; fi"
+    "test": "./node_modules/.bin/gulp test:coverage && if [ \"$TRAVIS\" ]; then cat ./coverage/**/lcov.info | ./node_modules/.bin/coveralls; fi",
+    "start": "node app/index.js"
   },
   "license": "MIT",
   "dependencies": {
     "bootstrap": "^3.3.7",
     "dropdown": "^0.2.0",
+    "font-awesome": "^4.6.3",
     "gulp-sass": "^2.3.2",
     "owl.carousel": "^2.1.4",
     "respond": "^0.9.0",
